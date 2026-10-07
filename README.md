@@ -22,14 +22,14 @@ Requires Python 3.10+. Dependencies are `lark` and `ifcopenshell`, both installe
 **As a git submodule** (recommended while the project is young):
 
 ```bash
-git submodule add https://github.com/<owner>/IFCQuery.git vendor/IFCQuery
+git submodule add https://github.com/Muniz1994/IFCQuery.git vendor/IFCQuery
 pip install -e vendor/IFCQuery
 ```
 
 **Straight from git:**
 
 ```bash
-pip install "ifcquery @ git+https://github.com/<owner>/IFCQuery.git"
+pip install "ifcquery @ git+https://github.com/Muniz1994/IFCQuery.git"
 ```
 
 **For development:**
