@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/1.0/ids.xsd">
+    <info>
+        <title>Licensing sample requirements</title>
+    </info>
+    <specifications>
+        <specification name="IfcSpace[PredefinedType = &quot;IMPLANTACAO&quot;]" ifcVersion="IFC4" description="Needed by:&#10;rules.ifq:5: let implantacao = SUM(IfcSpace[PredefinedType = &quot;IMPLANTACAO&quot;] -&gt; Qto_SpaceBaseQuantities.GrossFloorArea)&#10;dsl_examples.ifq:8: IfcSpace[PredefinedType = &quot;IMPLANTACAO&quot;] -&gt; Qto_SpaceBaseQuantities.GrossFloorArea">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCSPACE</simpleValue>
+                    </name>
+                    <predefinedType>
+                        <simpleValue>IMPLANTACAO</simpleValue>
+                    </predefinedType>
+                </entity>
+            </applicability>
+            <requirements>
+                <property dataType="IFCAREAMEASURE" cardinality="required">
+                    <propertySet>
+                        <simpleValue>Qto_SpaceBaseQuantities</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>GrossFloorArea</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+        <specification name="IfcSpace[PredefinedType = GFA]" ifcVersion="IFC4" description="Needed by:&#10;rules.ifq:6: let abc = SUM(IfcSpace[PredefinedType = GFA] -&gt; Qto_SpaceBaseQuantities.GrossFloorArea)&#10;dsl_examples.ifq:14: SUM(IfcSpace[PredefinedType = GFA and PTMU_Licenciamento.Afetacao = &quot;Logística&quot;] -&gt; Qto_SpaceBaseQuantities.GrossFloorArea)">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCSPACE</simpleValue>
+                    </name>
+                    <predefinedType>
+                        <simpleValue>GFA</simpleValue>
+                    </predefinedType>
+                </entity>
+            </applicability>
+            <requirements>
+                <property dataType="IFCAREAMEASURE" cardinality="required">
+                    <propertySet>
+                        <simpleValue>Qto_SpaceBaseQuantities</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>GrossFloorArea</simpleValue>
+                    </baseName>
+                </property>
+                <property dataType="IFCLABEL" cardinality="required">
+                    <propertySet>
+                        <simpleValue>PTMU_Licenciamento</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>Afetacao</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+        <specification name="IfcSite" ifcVersion="IFC4" description="Needed by:&#10;rules.ifq:7: let terreno = FIRST(IfcSite -&gt; PTMU_Licenciamento.SuperficieTotal)&#10;dsl_examples.ifq:5: IfcSite -&gt; PTMU_Licenciamento.SuperficieTotal">
+            <applicability minOccurs="1" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCSITE</simpleValue>
+                    </name>
+                </entity>
+            </applicability>
+            <requirements>
+                <property cardinality="required">
+                    <propertySet>
+                        <simpleValue>PTMU_Licenciamento</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>SuperficieTotal</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+        <specification name="IfcSpace[PredefinedType = &quot;FRACAO&quot;]" ifcVersion="IFC4" description="Needed by:&#10;rules.ifq:16: COUNT(IfcSpace[PredefinedType = &quot;FRACAO&quot; and not exists(PTMU_Licenciamento.Afetacao)]) = 0&#10;dsl_examples.ifq:11: COUNT(IfcSpace[PredefinedType = &quot;FRACAO&quot; and PTMU_Licenciamento.Afetacao = &quot;Comércio&quot;])">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCSPACE</simpleValue>
+                    </name>
+                    <predefinedType>
+                        <simpleValue>FRACAO</simpleValue>
+                    </predefinedType>
+                </entity>
+            </applicability>
+            <requirements>
+                <property dataType="IFCLABEL" cardinality="required">
+                    <propertySet>
+                        <simpleValue>PTMU_Licenciamento</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>Afetacao</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+        <specification name="IfcSpace[PredefinedType = GFA] PTMU_Licenciamento.Afetacao = &quot;Logística&quot;" ifcVersion="IFC4" description="Needed by:&#10;dsl_examples.ifq:14: SUM(IfcSpace[PredefinedType = GFA and PTMU_Licenciamento.Afetacao = &quot;Logística&quot;] -&gt; Qto_SpaceBaseQuantities.GrossFloorArea)">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCSPACE</simpleValue>
+                    </name>
+                    <predefinedType>
+                        <simpleValue>GFA</simpleValue>
+                    </predefinedType>
+                </entity>
+                <property>
+                    <propertySet>
+                        <simpleValue>PTMU_Licenciamento</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>Afetacao</simpleValue>
+                    </baseName>
+                    <value>
+                        <simpleValue>Logística</simpleValue>
+                    </value>
+                </property>
+            </applicability>
+            <requirements>
+                <property dataType="IFCAREAMEASURE" cardinality="required">
+                    <propertySet>
+                        <simpleValue>Qto_SpaceBaseQuantities</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>GrossFloorArea</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+        <specification name="IfcBuildingStorey" ifcVersion="IFC4" description="Needed by:&#10;dsl_examples.ifq:18: IfcBuildingStorey[Name = &quot;Piso 0&quot;] &gt; IfcSpace[PredefinedType = &quot;FRACAO&quot;] -&gt; (Name, PTMU_Licenciamento.Afetacao)">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCBUILDINGSTOREY</simpleValue>
+                    </name>
+                </entity>
+            </applicability>
+            <requirements>
+                <attribute cardinality="required">
+                    <name>
+                        <simpleValue>Name</simpleValue>
+                    </name>
+                </attribute>
+            </requirements>
+        </specification>
+        <specification name="IfcSpace[PredefinedType = &quot;FRACAO&quot;] in IfcBuildingStorey" ifcVersion="IFC4" description="Needed by:&#10;dsl_examples.ifq:18: IfcBuildingStorey[Name = &quot;Piso 0&quot;] &gt; IfcSpace[PredefinedType = &quot;FRACAO&quot;] -&gt; (Name, PTMU_Licenciamento.Afetacao)">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCSPACE</simpleValue>
+                    </name>
+                    <predefinedType>
+                        <simpleValue>FRACAO</simpleValue>
+                    </predefinedType>
+                </entity>
+                <partOf>
+                    <entity>
+                        <name>
+                            <simpleValue>IFCBUILDINGSTOREY</simpleValue>
+                        </name>
+                    </entity>
+                </partOf>
+            </applicability>
+            <requirements>
+                <attribute cardinality="required">
+                    <name>
+                        <simpleValue>Name</simpleValue>
+                    </name>
+                </attribute>
+                <property dataType="IFCLABEL" cardinality="required">
+                    <propertySet>
+                        <simpleValue>PTMU_Licenciamento</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>Afetacao</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+        <specification name="IfcSpace" ifcVersion="IFC4" description="Needed by:&#10;dsl_examples.ifq:22: COUNT(IfcSpace[PTMU_Licenciamento.Afetacao ~= &quot;logistica&quot;])">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCSPACE</simpleValue>
+                    </name>
+                </entity>
+            </applicability>
+            <requirements>
+                <property dataType="IFCLABEL" cardinality="required">
+                    <propertySet>
+                        <simpleValue>PTMU_Licenciamento</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>Afetacao</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+    </specifications>
+</ids>

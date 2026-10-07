@@ -26,6 +26,23 @@ All errors subclass `ifcquery.IfcQueryError` and carry `.line` and `.column`. Th
 
 CLI: `python -m ifcquery MODEL.ifc "QUERY"` or `-f FILE.ifq`, optionally with `--json`. Exit code 0 means all rules passed, 1 means a rule failed or was inconclusive, 2 means an error.
 
+## Generate an IDS from queries
+
+```python
+result = ifcquery.generate_ids([Path("rules.ifq")], schema="IFC4", title="...", data_types={"Pset.Prop": "IFCAREAMEASURE"})
+result.to_xml("out.ids"); result.warnings; result.ids   # ifctester.ids.Ids
+```
+
+CLI: `python -m ifcquery.idscli a.ifq b.ifq -o out.ids [--schema IFC4] [--data-type PSET.PROP=TYPE]`.
+
+How queries become specifications (full table in `docs/ids.md`):
+- A projected path is required on the selected elements.
+- A filter path is required where the other conjuncts hold.
+- `exists(P)` is selection, so it is not required.
+- `PredefinedType` goes on the entity facet.
+- `FIRST`/`COUNT>0` make the specification required. `COUNT(Q)=0` makes it prohibited. `COUNT(Q[c and not exists(P)])=0` requires P where c holds.
+- `!=`, `~=`, `not`, `or`, and filters left of `>` can't be expressed in IDS. They are dropped from applicability, which broadens it, and produce a warning.
+
 ## Write queries
 
 ```

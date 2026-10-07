@@ -23,6 +23,8 @@ Parsing and checking never touch a model. Evaluation never re-parses.
 | `checker.py` | Static pass. Resolves classes, checks direct attributes and enum literals against the class, and infers a `Type` per expression (element list, value list, record list, scalar, boolean). |
 | `ifc_access.py` | Everything that reads an IFC model: selection by class, attributes, `PredefinedType` resolution, pset values, quantity units, and containment descendants. |
 | `evaluator.py` | Walks the AST against a model. Defines `Result` and the list wrappers `ElementList`, `ValueList` and `RecordList`, plus the comparison semantics (`compare`, `fold`). |
+| `idsgen.py` | IDS generation (see [ids.md](ids.md)). It walks checked programs into `Need`/`Facet` dataclasses, groups them by applicability, and converts them to `ifctester.ids` objects. |
+| `idscli.py` | `python -m ifcquery.idscli` / `ifcquery-ids`. |
 | `errors.py` | Exception hierarchy. |
 | `__init__.py` | Public API: `parse`, `evaluate`, `run`, `schema_of`. |
 | `cli.py`, `__main__.py` | `python -m ifcquery`. |
@@ -71,6 +73,10 @@ Comment-only and blank lines are folded into a single `_NL`.
 
 **Support another relationship in containment** (e.g. `IfcRelNests`): extend `ModelAccess.descendant_ids` in `ifc_access.py`.
 
+**Language changes and IDS generation:** a new condition or function may need a mapping in `idsgen.py`:
+- conditions go in `_Collector.facet_for`, which returns None when the condition can't be expressed
+- statement-level patterns go in `_Collector.rule_pattern`
+
 **Change how values are read** (e.g. units for non-quantity properties): `ModelAccess.value` / `property_value` in `ifc_access.py` is the only place to change.
 
 ## Tests (`tests/`)
@@ -82,5 +88,6 @@ Comment-only and blank lines are folded into a single `_NL`.
 | `test_checker.py` | Schema validation and static types |
 | `test_evaluator.py` | Semantics against the sample model (metres and millimetres) |
 | `test_cli.py` | Command line, including every file in `examples/queries/` |
+| `test_idsgen.py` | IDS derivation rules, XSD validity, and round trips that validate the sample models with ifctester |
 
 The sample model is built in memory by `examples/build_sample_models.py`, the same code that writes the committed `.ifc` files. Its docstring lists the model's content, which is what the expected values in the tests are based on.

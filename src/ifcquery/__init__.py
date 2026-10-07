@@ -25,6 +25,7 @@ from .errors import (
 )
 from .evaluator import ElementList, RecordList, Result, ValueList
 from .evaluator import evaluate as _evaluate
+from .idsgen import IdsResult, generate_ids
 from .parser import parse_syntax
 
 __version__ = "0.1.0"
@@ -34,6 +35,8 @@ __all__ = [
     "evaluate",
     "run",
     "schema_of",
+    "generate_ids",
+    "IdsResult",
     "Program",
     "Result",
     "ElementList",

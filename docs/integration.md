@@ -15,7 +15,7 @@ IFCQuery is a standard Python package (`src/` layout, `pyproject.toml`), so any 
 
 After a fresh clone of the parent project, run `git submodule update --init` before `pip install -e vendor/IFCQuery`.
 
-Runtime dependencies: `lark>=1.2` and `ifcopenshell>=0.8`. Python 3.10 or newer.
+Runtime dependencies: `lark>=1.2`, `ifcopenshell>=0.8` and `ifctester>=0.8` (for IDS generation). Python 3.10 or newer.
 
 ## 2. API reference
 
@@ -46,6 +46,15 @@ Convenience wrapper. It opens the model if given a path, parses with the model's
 ### `ifcquery.schema_of(model) -> str`
 
 Returns the schema identifier of an open model, e.g. `"IFC4"`. Use it to parse with the correct schema: `ifcquery.parse(text, ifcquery.schema_of(model))`.
+
+### `ifcquery.generate_ids(sources, schema=None, title=..., author=None, description=None, data_types=None) -> IdsResult`
+
+Builds a buildingSMART IDS listing the attributes and properties the queries need. `sources` can be query text, a `pathlib.Path` to a query file, a `Program`, or a list of these. The result has these members:
+- `.ids`: an `ifctester.ids.Ids`
+- `.warnings`: conditions IDS couldn't express
+- `.to_xml(path)` and `.to_string()`
+
+See [ids.md](ids.md) for the mapping rules.
 
 ### `Result`
 
