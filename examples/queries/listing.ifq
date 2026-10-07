@@ -1,0 +1,13 @@
+// Listings that are handy while debugging a model.
+
+// Every space with its classification, use and net area
+IfcSpace -> (Name, PredefinedType, PTMU_Licenciamento.Afetacao, Qto_SpaceBaseQuantities.NetFloorArea)
+
+// Fractions in Bloco A, across all storeys
+IfcBuilding[Name = "Bloco A"] > IfcBuildingStorey > IfcSpace[ObjectType = "FRACAO"] -> Name
+
+// Spaces missing their use
+IfcSpace[not exists(PTMU_Licenciamento.Afetacao)] -> Name
+
+// Walls (IfcWallStandardCase is included as a subtype) and their lengths in metres
+IfcWall -> (Name, Qto_WallBaseQuantities.Length)

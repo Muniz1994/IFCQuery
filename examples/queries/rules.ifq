@@ -1,0 +1,16 @@
+// Licensing rule checks for examples/models/licensing_sample.ifc
+//   python -m ifcquery examples/models/licensing_sample.ifc -f examples/queries/rules.ifq
+// Exit code is 0 only if every rule passes.
+
+let implantacao = SUM(IfcSpace[PredefinedType = "IMPLANTACAO"] -> Qto_SpaceBaseQuantities.GrossFloorArea)
+let abc         = SUM(IfcSpace[PredefinedType = GFA] -> Qto_SpaceBaseQuantities.GrossFloorArea)
+let terreno     = FIRST(IfcSite -> PTMU_Licenciamento.SuperficieTotal)
+
+// Implantation index: at most 60% of the site            (500 / 2000 = 0.25 -> PASS)
+implantacao / terreno <= 0.6
+
+// Building-use index: at most 1.2                        (500 / 2000 = 0.25 -> PASS)
+abc / terreno <= 1.2
+
+// Data quality: every fraction must declare its use      ("Fração D" has none -> FAIL)
+COUNT(IfcSpace[PredefinedType = "FRACAO" and not exists(PTMU_Licenciamento.Afetacao)]) = 0

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ifcquery"
+version = "0.1.0"
+description = "A small query language for IFC models: parser (Lark) and evaluator (IfcOpenShell)."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    "lark>=1.2",
+    "ifcopenshell>=0.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+ifcquery = "ifcquery.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ifcquery = ["grammar.lark"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

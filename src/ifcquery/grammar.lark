@@ -1,0 +1,140 @@
+// IFCQuery grammar (Lark, LALR + contextual lexer).
+// Language reference: DSL.md. Design notes: docs/architecture.md.
+//
+// Lexing notes:
+// - The contextual lexer only tries terminals that the parser can accept in
+//   the current state. That is how a bare word becomes ENUM in literal
+//   position and NAME in path or variable position.
+// - Keywords and function names are case-insensitive regexes ending in \b,
+//   so `count` is a keyword but `country` is a NAME. They are reserved.
+// - CONTAINS is ">" followed by an IFC class name; plain ">" is GT.
+
+start: (statement (_NL statement)*)?
+
+?statement: let_stmt
+          | expr_stmt
+
+let_stmt: LET NAME EQ expr
+expr_stmt: expr
+
+// ---- expressions --------------------------------------------------------------
+
+?expr: arith
+     | arith compop arith        -> compare
+
+?arith: term
+      | arith PLUS term          -> binop
+      | arith MINUS term         -> binop
+
+?term: unary
+     | term STAR unary           -> binop
+     | term SLASH unary          -> binop
+
+?unary: primary
+      | MINUS unary              -> neg
+
+?primary: NUMBER                 -> number
+        | STRING                 -> string
+        | boolean
+        | NAME                   -> var
+        | call
+        | query
+        | "(" expr ")"
+
+call: FUNC "(" expr ")"
+
+compop: EQ | NE | LT | LE | GT | GE | APPROX
+
+// ---- queries --------------------------------------------------------------------
+
+query: selection (ARROW projection)?
+
+selection: entity (CONTAINS entity)*
+
+entity: IFCCLASS ("[" condition "]")?
+
+?projection: path                        -> single_projection
+           | "(" path ("," path)* ")"    -> multi_projection
+
+// ---- filter conditions -------------------------------------------------------------
+
+?condition: or_cond
+
+?or_cond: and_cond (_OR and_cond)*
+
+?and_cond: not_cond (_AND not_cond)*
+
+?not_cond: atom
+         | _NOT not_cond                 -> negation
+
+?atom: path compop literal               -> comparison
+     | path _IN "(" literal ("," literal)* ")"   -> in_list
+     | _EXISTS "(" path ")"              -> exists
+     | "(" condition ")"
+
+path: name ("." name)?
+
+?name: NAME
+     | STRING
+
+?literal: STRING                         -> string
+        | NUMBER                         -> number
+        | MINUS NUMBER                   -> neg_number
+        | boolean
+        | ENUM                           -> enum
+
+boolean: TRUE | FALSE
+
+// ---- terminals -------------------------------------------------------------------------
+
+LET.4: /(?i:let)\b/
+FUNC.4: /(?i:count|sum|avg|min|max|first)\b/
+TRUE.4: /(?i:true)\b/
+FALSE.4: /(?i:false)\b/
+_AND.4: /(?i:and)\b/
+_OR.4: /(?i:or)\b/
+_NOT.4: /(?i:not)\b/
+_IN.4: /(?i:in)\b/
+_EXISTS.4: /(?i:exists)\b/
+
+IFCCLASS.3: /(?i:ifc)\w*/
+ENUM.2: /[A-Z][A-Z0-9_]*\b/
+NAME: /[^\W\d]\w*/
+STRING: /"(?:[^"\\\r\n]|\\.)*"/
+NUMBER: /\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/
+
+ARROW.3: "->"
+CONTAINS.3: />(?=\s*(?i:ifc))/
+EQ: "="
+NE: "!="
+LE: "<="
+GE: ">="
+LT: "<"
+GT: ">"
+APPROX: "~="
+PLUS: "+"
+MINUS: "-"
+STAR: "*"
+SLASH: "/"
+
+// A newline ends a statement. The postlexer (parser.py) drops it inside
+// brackets. A line that is a comment, or contains only whitespace, is folded
+// into the same _NL token. A comment must run to the end of its line, so it
+// cannot be split partway through.
+_NL: /(?:\r?\n[\t ]*(?:\/\/[^\r\n]*(?=\r?\n|\Z))?)+/
+
+// A newline followed by a line that starts with a binary operator (other than
+// "-", which could also be a unary minus) continues the statement. One
+// example is a line starting with `-> (Name, ...)`.
+_CONTINUATION.5: /(?:\r?\n[\t ]*(?:\/\/[^\r\n]*(?=\r?\n|\Z))?)+(?=[\t ]*(?:->|>|<|=|!=|~=|\+|\*|\/(?!\/)|(?i:and|or)\b))/
+
+// Whitespace and comments at the end of the text.
+_TRAILING.6: /(?:\s|\/\/[^\n]*)+\Z/
+
+COMMENT: /\/\/[^\n]*/
+WS: /[ \t\f]+/
+
+%ignore WS
+%ignore COMMENT
+%ignore _CONTINUATION
+%ignore _TRAILING

@@ -1,0 +1,22 @@
+// The examples from DSL.md, runnable against examples/models/licensing_sample.ifc
+//   python -m ifcquery examples/models/licensing_sample.ifc -f examples/queries/dsl_examples.ifq
+
+// Total area of the site, from the municipal licensing property set
+IfcSite -> PTMU_Licenciamento.SuperficieTotal
+
+// Gross floor area of each implantation space
+IfcSpace[PredefinedType = "IMPLANTACAO"] -> Qto_SpaceBaseQuantities.GrossFloorArea
+
+// Number of commercial fractions
+COUNT(IfcSpace[PredefinedType = "FRACAO" and PTMU_Licenciamento.Afetacao = "Comércio"])
+
+// Total gross floor area used for logistics
+SUM(IfcSpace[PredefinedType = GFA and PTMU_Licenciamento.Afetacao = "Logística"]
+    -> Qto_SpaceBaseQuantities.GrossFloorArea)
+
+// Fractions on the ground floor, by name and use
+IfcBuildingStorey[Name = "Piso 0"] > IfcSpace[PredefinedType = "FRACAO"]
+  -> (Name, PTMU_Licenciamento.Afetacao)
+
+// Tolerant matching for inconsistently typed values
+COUNT(IfcSpace[PTMU_Licenciamento.Afetacao ~= "logistica"])
